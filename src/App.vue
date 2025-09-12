@@ -20,7 +20,7 @@
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="#">Login</a></li>
             <li><a class="dropdown-item" href="#">Log out</a></li>
-            <li><a class="dropdown-item" href="#">Register</a></li>
+            <li><a class="dropdown-item" href="/cus2">Register</a></li>
           </ul>
         </li>
         <li class="nav-item">
@@ -29,6 +29,8 @@
                 <li class="nav-item">
           <a class="nav-link" href="/cus">customer</a>
         </li>
+        
+
       </ul>
       
       <form class="d-flex" role="search">
