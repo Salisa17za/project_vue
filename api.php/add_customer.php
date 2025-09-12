@@ -1,5 +1,5 @@
 <?php
-
+header('Content-Type: application/json');
   // เชื่อมต่อฐานข้อมูล
 include 'condb.php';
 
@@ -7,22 +7,20 @@ try {
  //ตรวจสอบคำขอที่ได้รับจาก Client  ตามประเภทของคำ ว่าเป็น GET หรือ POST
     $method = $_SERVER['REQUEST_METHOD'];
 
-    
-        //เพิ่มข้อมูล
-        if ($method === "POST") {
-        $firstName = $_POST["firstName"];
-        $lastName  = $_POST["lastName"];
-        $username  = $_POST["username"];
-        $password  = $_POST["password"];
+   if ($method == 'POST') {
+        // รับข้อมูลจาก Client
+        $data = json_decode(file_get_contents("php://input"), true);
 
-
-        $stmt = $conn->prepare("INSERT INTO customers (firstName, lastName, phone, username, password) VALUES (?,?,?,?,?)");
-
-        //----------------แปลง password---------------
-        $password = password_hash($data['password'], PASSWORD_BCRYPT);
-
-        $stmt->execute([$fileName, $fileName, $phone, $username, $password]);
-
+        // ตรวจสอบค่าที่จำเป็น
+        if (isset($data['firstName'], $data['lastName'], $data['phone'], $data['username'], $data['password'])) {
+            // เพิ่มข้อมูลลูกค้าใหม่
+          $stmt = $conn->prepare("INSERT INTO customers (firstName, lastName, phone, username, password) VALUES (:firstName, :lastName, :phone, :username, :password)");
+            $stmt->bindParam(':firstName', $data['firstName']);
+            $stmt->bindParam(':lastName', $data['lastName']);
+            $stmt->bindParam(':phone', $data['phone']);
+            $stmt->bindParam(':username', $data['username']);
+            $hashedPassword = password_hash($data['password'], PASSWORD_BCRYPT);
+            $stmt->bindParam(':password', $hashedPassword);
 
             if ($stmt->execute()) {
                 echo json_encode(["success" => true, "message" => "Customer added successfully"]);
@@ -32,12 +30,8 @@ try {
         } else {
             echo json_encode(["success" => false, "message" => "Missing required fields"]);
         }
-    
-
-
-
+    } 
 } catch (PDOException $e) {
     echo json_encode(["success" => false, "message" => "Database error: " . $e->getMessage()]);
 }
-
 ?>
