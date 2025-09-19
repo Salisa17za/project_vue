@@ -3,7 +3,7 @@
     <h2 class="mb-3">แสดงข้อมูลสินค้า</h2>
     
     <div class="mb-3">
-      <a class="btn btn-primary" href="/cus2" role="button">Add+</a>
+      <a class="btn btn-primary" href="/addpro" role="button">Add+</a>
     </div>
 
     <!-- ตารางแสดงข้อมูลลูกค้า -->
@@ -14,8 +14,8 @@
           <th>ชื่อสินค้า</th>
           <th>รายละเอียด</th>
           <th>ราคา</th>
-          <th>รูปภาพ</th>
           <th>จำนวน</th>
+          <th>รูปภาพ</th>
         </tr>
       </thead>
       <tbody>
@@ -24,8 +24,15 @@
           <td>{{ product.product_name }}</td>
           <td>{{ product.description }}</td>
           <td>{{ product.price}}</td>
-          <td>{{ product.image}}</td>
-          <td>{{ product.stock}}</td>
+            <td>{{ product.stock}}</td>
+          <td><img
+            :src="'http://localhost:8081/project_vue/api.php/uploads/' + product.image"
+            width="100"
+            height="150"
+            class="card-img-top"
+            :alt="product.name"
+          ></td>
+        
         </tr>
       </tbody>
     </table>
