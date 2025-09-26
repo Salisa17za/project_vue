@@ -11,15 +11,15 @@ try {
         $data = json_decode(file_get_contents("php://input"), true);
 
         // ตรวจสอบค่าที่จำเป็น
-        if (isset($data['firstName'], $data['lastName'], $data['phone'], $data['username'], $data['password'])) {
+        if (isset($data['student_id'],['first_name'], $data['last_name'], $data['email'], $data['phone'])) {
             // เพิ่มข้อมูลลูกค้าใหม่
-          $stmt = $conn->prepare("INSERT INTO customers (firstName, lastName, phone, username, password) VALUES (:firstName, :lastName, :phone, :username, :password)");
-            $stmt->bindParam(':firstName', $data['firstName']);
-            $stmt->bindParam(':lastName', $data['lastName']);
-            $stmt->bindParam(':phone', $data['phone']);
-            $stmt->bindParam(':username', $data['username']);
-            $hashedPassword = password_hash($data['password'], PASSWORD_BCRYPT);
-            $stmt->bindParam(':password', $hashedPassword);
+          $stmt = $conn->prepare("INSERT INTO students(student_id,first_name,last_name,email, phone) VALUES (:students_id,:first_name, :last_name, :email, :phone)");
+        $stmt->bindParam(":student_id", $data["student_id"]);
+        $stmt->bindParam(":first_name", $data["first_name"]);
+        $stmt->bindParam(":last_name", $data["last_name"]);
+        $stmt->bindParam(":email", $data["email"]);
+        $stmt->bindParam(":phone", $data["phone"]);
+
 
             if ($stmt->execute()) {
                 echo json_encode(["success" => true, "message" => "Customer added successfully"]);

@@ -32,6 +32,9 @@
                 <li class="nav-item">
           <a class="nav-link" href="/cus">Customer</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/std">Student</a>
+        </li>
        
                 
         

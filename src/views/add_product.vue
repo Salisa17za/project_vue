@@ -60,7 +60,7 @@ export default {
         formData.append("stock", this.product.stock);
         formData.append("image", this.product.image);
 
-        const res = await fetch("http://localhost:8081/project_vue/api.php/addproduct.php", {
+        const res = await fetch("http://localhost:8082/project_vue/api.php/addproduct.php", {
           method: "POST",
           body: formData, // ❌ ห้ามใส่ Content-Type เดี๋ยว browser จะจัดการเอง
         });

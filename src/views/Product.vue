@@ -26,7 +26,7 @@
           <td>{{ product.price}}</td>
             <td>{{ product.stock}}</td>
           <td><img
-            :src="'http://localhost:8081/project_vue/api.php/uploads/' + product.image"
+            :src="'http://localhost:8082/project_vue/api.php/uploads/' + product.image"
             width="100"
             height="150"
             class="card-img-top"
@@ -62,7 +62,7 @@ export default {
     // ฟังก์ชันดึงข้อมูลจาก API ด้วย GET
     const fetchproducts = async () => {
       try {
-        const response = await fetch("http://localhost:8081/project_vue/api.php/show_product.php", {
+        const response = await fetch("http://localhost:8082/project_vue/api.php/show_product.php", {
           method: "GET",
           headers: {
             "Content-Type": "application/json"
@@ -90,6 +90,7 @@ export default {
     onMounted(() => {
       fetchproducts();
     });
+    
 
     return {
       products,
