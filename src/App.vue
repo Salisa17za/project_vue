@@ -18,6 +18,16 @@
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Customer
+          </a>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/cus">Customer</a></li>
+            <li><a class="dropdown-item" href="/editcus">EditCustomer</a></li>
+            
+          </ul>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Login
           </a>
           <ul class="dropdown-menu">
@@ -25,13 +35,14 @@
             <li><a class="dropdown-item" href="#">Log out</a></li>
             <li><a class="dropdown-item" href="/cus2">Register</a></li>
           </ul>
+
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/about">About</a>
         </li>
-                <li class="nav-item">
-          <a class="nav-link" href="/cus">Customer</a>
-        </li>
+       
+        
+   
         <li class="nav-item">
           <a class="nav-link" href="/std">Student</a>
         </li>
