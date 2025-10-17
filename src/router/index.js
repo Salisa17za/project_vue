@@ -82,7 +82,43 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '../views/customer_edit.vue')
+  },
+   {
+    path: '/editpro',
+    name: 'editpro',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/ProductEdit.vue')
   }
+  ,
+   {
+    path: '/epy',
+    name: 'epy',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/Employees.vue')
+  }
+  ,
+   {
+    path: '/epy1',
+    name: 'epy1',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/EditEmployees.vue')
+  }
+    ,
+   {
+    path: '/epyadd',
+    name: 'epyadd',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/add_employee.vue')
+  }
+
 
 
 ]

@@ -1,6 +1,6 @@
 <template>
   <div class="container mt-4 col-md-4 bg-body-secondary ">
-    <h2 class="text-center mb-3">ลงทะเบียน</h2>
+    <h2 class="text-center mb-3">เพิ่มข้อมูลลูกค้า</h2>
     <form @submit.prevent="addCustomer">
       <div class="mb-2">
         <input v-model="customer.firstName" class="form-control" placeholder="ชื่อ" required />
