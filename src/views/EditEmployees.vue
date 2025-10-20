@@ -3,7 +3,7 @@
     <h2 class="mb-3">รายการพนักงาน</h2>
 
     <div class="mb-3">
-      <button class="btn btn-primary" @click="openAddModal">เพิ่มพนักงาน+</button>
+      <button class="btn btn-primary" @click="openAddModal">เพิ่มพนักงาน</button>
     </div>
 
     <table class="table table-bordered table-striped">
@@ -14,6 +14,7 @@
           <th>นามสกุล</th>
           <th>ชื่อผู้ใช้</th>
           <th>รหัสผ่าน</th>
+          <th>การจัดการ</th>
         </tr>
       </thead>
       <tbody>
@@ -22,6 +23,7 @@
           <td>{{ employee.first_name }}</td>
           <td>{{ employee.last_name }}</td>
           <td>{{ employee.username }}</td>
+          <td>{{ employee.password }}</td> 
           <td>
             <button class="btn btn-warning btn-sm me-2" @click="openEditModal(employee)">
               แก้ไข
@@ -61,9 +63,12 @@
               </div>
               <div class="mb-3">
                 <label class="form-label">รหัสผ่าน</label>
-                <input v-model="editForm.password" type="password" class="form-control" required />
+                <input v-model="editForm.password" type="password" class="form-control"
+                       :placeholder="isEditMode ? 'กรอกใหม่หากต้องการเปลี่ยนรหัสผ่าน' : ''" />
               </div>
-
+              <div class="mb-2">
+                <input type="file" @change="onFileChange" ref="fileInput" />
+              </div>
               <button type="submit" class="btn btn-success">
                 {{ isEditMode ? "บันทึกการแก้ไข" : "บันทึกพนักงานใหม่" }}
               </button>
@@ -84,7 +89,7 @@ export default {
     const employees = ref([]);
     const loading = ref(true);
     const error = ref(null);
-    const isEditMode = ref(false); // ✅ เช็คโหมด
+    const isEditMode = ref(false);
     const editForm = ref({
       employee_id: null,
       first_name: "",
@@ -94,10 +99,9 @@ export default {
     });
     let modalInstance = null;
 
-    // โหลดข้อมูลพนักงาน
     const fetchEmployees = async () => {
       try {
-        const res = await fetch("http://localhost:8082/project_vue/api.php/api_employee.php");
+        const res = await fetch("http://localhost/project_vue/api.php/employee_crud.php");
         const data = await res.json();
         employees.value = data.success ? data.data : [];
       } catch (err) {
@@ -107,7 +111,6 @@ export default {
       }
     };
 
-    // เปิด Modal สำหรับเพิ่มพนักงาน
     const openAddModal = () => {
       isEditMode.value = false;
       editForm.value = {
@@ -122,16 +125,15 @@ export default {
       modalInstance.show();
     };
 
-    // เปิด Modal สำหรับแก้ไขพนักงาน
     const openEditModal = (employee) => {
       isEditMode.value = true;
-      editForm.value = { ...employee };
+      // ตั้ง password เป็นว่าง ไม่ให้เปลี่ยนเอง
+      editForm.value = { ...employee, password: "" };
       const modalEl = document.getElementById("editModal");
       modalInstance = new window.bootstrap.Modal(modalEl);
       modalInstance.show();
     };
 
-    // บันทึกข้อมูลพนักงาน (เพิ่ม / แก้ไข)
     const saveEmployee = async () => {
       const formData = new FormData();
       formData.append("action", isEditMode.value ? "update" : "add");
@@ -139,36 +141,37 @@ export default {
       formData.append("first_name", editForm.value.first_name);
       formData.append("last_name", editForm.value.last_name);
       formData.append("username", editForm.value.username);
-      formData.append("password", editForm.value.password);
+
+      // ส่งรหัสผ่านเฉพาะถ้ามีการกรอก
+      if (editForm.value.password !== "") {
+        formData.append("password", editForm.value.password);
+      }
 
       try {
-        const res = await fetch("http://localhost:8082/project_vue/api.php/api_employee.php", {
+        const res = await fetch("http://localhost/project_vue/api.php/employee_crud.php", {
           method: "POST",
           body: formData,
         });
         const result = await res.json();
         if (result.message) {
           alert(result.message);
-          fetchEmployees();
-          modalInstance.hide();
+          await fetchEmployees();
+          if (modalInstance) modalInstance.hide();
         } else if (result.error) {
           alert(result.error);
         }
       } catch (err) {
-        alert(err.message);
+        alert("เกิดข้อผิดพลาด: " + err.message);
       }
     };
 
-    // ลบพนักงาน
     const deleteEmployee = async (id) => {
       if (!confirm("คุณแน่ใจหรือไม่ที่จะลบพนักงานนี้?")) return;
-
       const formData = new FormData();
       formData.append("action", "delete");
       formData.append("employee_id", id);
-
       try {
-        const res = await fetch("http://localhost:8082/project_vue/api.php/api_employee.php", {
+        const res = await fetch("http://localhost/project_vue/api.php/employee_crud.php", {
           method: "POST",
           body: formData,
         });
@@ -180,7 +183,7 @@ export default {
           alert(result.error);
         }
       } catch (err) {
-        alert(err.message);
+        alert("เกิดข้อผิดพลาด: " + err.message);
       }
     };
 

@@ -4,7 +4,7 @@
     <div class="row">
       <div class="col-md-3" v-for="product in products" :key="product.id">
         <div class="card shadow-sm mb-4">
-          <img :src="'http://localhost:8082/project_vue/api.php/uploads/' + product.image" width="70%" height="300" 
+          <img :src="'http://localhost/project_vue/api.php/uploads/' + product.image" width="70%" height="300" 
            class="card-img-top" :alt="product.name">
           <div class="card-body text-center">
             <h5 class="card-title">{{ product.product_name }}</h5>
@@ -32,7 +32,7 @@ export default {
     // ฟังก์ชันดึงข้อมูลจาก API ด้วย GET
     const fetchProducts = async () => {
       try {
-        const response = await fetch("http://localhost:8082/project_vue/api.php/show_product.php", {
+        const response = await fetch("http://localhost/project_vue/api.php/show_product.php", {
           method: "GET",
           headers: {
             "Content-Type": "application/json"

@@ -102,7 +102,7 @@ export default {
     // ฟังก์ชันดึงข้อมูลจาก API ด้วย GET
     const fetchstudents = async () => {
       try {
-        const response = await fetch("http://localhost:8082/project_vue/api.php/student_crud.php", {
+        const response = await fetch("http://localhost/project_vue/api.php/student_crud.php", {
           method: "GET",
           headers: {
             "Content-Type": "application/json"
@@ -141,7 +141,7 @@ export default {
 // เพิ่มฟังก์ชั่นการแก้ไขข้อมูล ***
     const updatestudent = async () => {
       try {
-        const response = await fetch("http://localhost:8082/project_vue/api.php/student_crud.php", {
+        const response = await fetch("http://localhost/project_vue/api.php/student_crud.php", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(editstudent.value)
@@ -168,7 +168,7 @@ const deletestudents = async (id) => {
   if (!confirm("คุณต้องการลบข้อมูลนี้ใช่หรือไม่?")) return;
 
   try {
-    const response = await fetch("http://localhost:8082/project_vue/api.php/student_crud.php", {
+    const response = await fetch("http://localhost/project_vue/api.php/student_crud.php", {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json"

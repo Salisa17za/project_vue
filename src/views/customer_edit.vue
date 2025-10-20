@@ -102,7 +102,7 @@ export default {
 
     const fetchCustomers = async () => {
       try {
-        const response = await fetch("http://localhost:8082/project_vue/api.php/customer_crud.php", {
+        const response = await fetch("http://localhost/project_vue/api.php/customer_crud.php", {
           method: "GET",
           headers: { "Content-Type": "application/json" }
         });
@@ -136,7 +136,7 @@ export default {
 // เพิ่มฟังก์ชั่นการแก้ไขข้อมูล ***
     const updateCustomer = async () => {
       try {
-        const response = await fetch("http://localhost:8082/project_vue/api.php/customer_crud.php", {
+        const response = await fetch("http://localhost/project_vue/api.php/customer_crud.php", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(editCustomer.value)
@@ -163,7 +163,7 @@ export default {
       if (!confirm("คุณต้องการลบข้อมูลนี้ใช่หรือไม่?")) return;
 
       try {
-        const response = await fetch("http://localhost:8082/project_vue/api.php/showcustomer.php", {
+        const response = await fetch("http://localhost/project_vue/api.php/showcustomer.php", {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ customer_id: id })

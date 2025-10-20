@@ -50,7 +50,7 @@ export default {
   methods: {
     async addstudents() {
       try {
-        const res = await fetch("http://localhost:8082/project_vue/api.php/api_student.php", {
+        const res = await fetch("http://localhost/project_vue/api.php/api_student.php", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(this.students)

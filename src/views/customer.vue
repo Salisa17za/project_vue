@@ -58,7 +58,7 @@ export default {
     // ฟังก์ชันดึงข้อมูลจาก API ด้วย GET
     const fetchCustomers = async () => {
       try {
-        const response = await fetch("http://localhost:8082/project_vue/api.php/showcustomer.php", {
+        const response = await fetch("http://localhost/project_vue/api.php/showcustomer.php", {
           method: "GET",
           headers: {
             "Content-Type": "application/json"
@@ -93,7 +93,7 @@ const deleteCustomer = async (id) => {
   if (!confirm("คุณต้องการลบข้อมูลนี้ใช่หรือไม่?")) return;
 
   try {
-    const response = await fetch("http://localhost:8082/project_vue/api.php/api_customer.php", {
+    const response = await fetch("http://localhost/project_vue/api.php/api_customer.php", {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json"

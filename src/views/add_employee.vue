@@ -12,8 +12,8 @@
         <input v-model="employee.username" class="form-control" placeholder="ชื่อผู้ใช้" required />
       </div>
       <div class="mb-2">
-        <input v-model="employee.status" class="form-control" placeholder="รหัสผ่าน" required />
-      </div>
+  <input v-model="employee.password" class="form-control" placeholder="รหัสผ่าน" required />
+</div>
       <div class="mb-2">
         <!-- ใช้ @change อ่านไฟล์ -->
         <input type="file" @change="onFileChange" ref="fileInput" required />
@@ -24,6 +24,7 @@
         <button type="reset" class="btn btn-secondary mb-4">ยกเลิก</button>
       </div>
     </form>
+
 
     <div v-if="message" class="alert alert-info mt-3">
       {{ message }}
@@ -56,10 +57,12 @@ export default {
         formData.append("first_name", this.employee.first_name);
         formData.append("last_name", this.employee.last_name);
         formData.append("username", this.employee.username);
-        formData.append("status", this.employee.password);
+        formData.append("password", this.employee.password);
         formData.append("image", this.employee.image);
+        
 
-        const res = await fetch("http://localhost:8082/project_vue/api.php/add_employee.php", {
+
+        const res = await fetch("http://localhost/project_vue/api.php/add_employee.php", {
           method: "POST",
           body: formData, // ❌ ห้ามใส่ Content-Type เดี๋ยว browser จะจัดการเอง
         });
@@ -69,7 +72,7 @@ export default {
 
         if (data.success) {
           // ✅ เคลียร์ข้อมูล
-          this.employee = { first_name: "", last_name: "", username: "", status: "", image: null };
+          this.employee = { first_name: "", last_name: "", username: "", password: "", image: null };
           this.$refs.fileInput.value = "";
         }
       } catch (err) {

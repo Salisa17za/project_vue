@@ -3,125 +3,111 @@ include 'condb.php';
 header("Content-Type: application/json; charset=UTF-8");
 
 try {
-    $method = $_SERVER['REQUEST_METHOD'];
+    $action = $_POST["action"] ?? "";
 
-    // ✅ ดึงข้อมูลพนักงานทั้งหมด
-    if ($method === "GET") {
-        $stmt = $conn->prepare("SELECT employee_id, first_name, last_name, username, password ,  image FROM employees ORDER BY employee_id DESC");
+    // ✅ ดึงข้อมูลพนักงานทั้งหมด (GET)
+    if ($_SERVER["REQUEST_METHOD"] === "GET") {
+        $stmt = $conn->prepare("SELECT employee_id, first_name, last_name, username, password FROM employee ORDER BY employee_id DESC");
         $stmt->execute();
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         echo json_encode(["success" => true, "data" => $result]);
+        exit;
     }
 
     // ✅ เพิ่มข้อมูลพนักงาน
-    elseif ($method === "POST") {
-        // ตรวจสอบว่าข้อมูลมาจาก JSON หรือ form-data
-        $contentType = $_SERVER["CONTENT_TYPE"] ?? '';
+    if ($action === "add") {
+        $first_name = $_POST["first_name"] ?? "";
+        $last_name = $_POST["last_name"] ?? "";
+        $username = $_POST["username"] ?? "";
+        $password = $_POST["password"] ?? "";
 
-        if (stripos($contentType, "application/json") !== false) {
-            $data = json_decode(file_get_contents("php://input"), true);
-        } else {
-            $data = $_POST;
-        }
-
-        // ตรวจสอบค่าว่าง
-        if (empty($data["first_name"]) || empty($data["last_name"]) || empty($data["username"]) || empty($data["password"]) || empty($data["image"])) {
+        if (empty($first_name) || empty($last_name) || empty($username) || empty($password)) {
             echo json_encode(["success" => false, "message" => "กรุณากรอกข้อมูลให้ครบ"]);
             exit;
         }
 
-        // เพิ่มข้อมูลพนักงาน
-        $stmt = $conn->prepare("INSERT INTO employees (first_name, last_name, username, password , image)
-                                VALUES (:first_name, :last_name, :username, :password , :image)");
+        // เข้ารหัสรหัสผ่าน
+        $password_hash = password_hash($password, PASSWORD_DEFAULT);
 
-        $stmt->bindParam(":first_name", $data["first_name"]);
-        $stmt->bindParam(":last_name", $data["last_name"]);
-        $stmt->bindParam(":username", $data["username"]);
-        if (!empty($data["password"])) {
-            $stmt->bindParam(":password", $password_hash);
-        }
-        $stmt->bindParam(":id", $customer_id, PDO::PARAM_INT);
-
-        if ($stmt->execute()) {
-            echo json_encode(["success" => true, "message" => "แก้ไขข้อมูลเรียบร้อย"]);
-        } else {
-            echo json_encode(["success" => false, "message" => "ไม่สามารถแก้ไขข้อมูลได้"]);
-        }
-        $stmt->bindParam(":image", $data["image"]);
+        $stmt = $conn->prepare("INSERT INTO employee (first_name, last_name, username, password) 
+                                VALUES (:first_name, :last_name, :username, :password)");
+        $stmt->bindParam(":first_name", $first_name);
+        $stmt->bindParam(":last_name", $last_name);
+        $stmt->bindParam(":username", $username);
+        $stmt->bindParam(":password", $password_hash);
 
         if ($stmt->execute()) {
             echo json_encode(["success" => true, "message" => "เพิ่มข้อมูลพนักงานเรียบร้อย"]);
         } else {
             echo json_encode(["success" => false, "message" => "ไม่สามารถเพิ่มข้อมูลพนักงานได้"]);
         }
+        exit;
     }
 
     // ✅ แก้ไขข้อมูลพนักงาน
-    elseif ($method === "PUT") {
-        $data = json_decode(file_get_contents("php://input"), true);
+    if ($action === "update") {
+        $employee_id = $_POST["employee_id"] ?? "";
+        $first_name = $_POST["first_name"] ?? "";
+        $last_name = $_POST["last_name"] ?? "";
+        $username = $_POST["username"] ?? "";
+        $password = $_POST["password"] ?? "";
 
-        if (!isset($data["employee_id"])) {
-            echo json_encode(["success" => false, "message" => "ไม่พบค่า employee_id"]);
+        if (empty($employee_id)) {
+            echo json_encode(["success" => false, "message" => "ไม่พบรหัสพนักงาน"]);
             exit;
         }
 
-        $employee_id = intval($data["employee_id"]);
+        // ถ้ามีรหัสผ่านใหม่ ให้เข้ารหัส
+        $password_hash = !empty($password) ? password_hash($password, PASSWORD_DEFAULT) : null;
 
-        $sql = "UPDATE employees 
-                SET first_name = :first_name, 
-                    last_name = :last_name, 
-                    username = :username, 
-                    password = :$password_hash, 
-                    image = :image
-                WHERE employee_id = :id";
+        if ($password_hash) {
+            $sql = "UPDATE employee 
+                    SET first_name = :first_name, last_name = :last_name, username = :username, password = :password
+                    WHERE employee_id = :id";
+        } else {
+            $sql = "UPDATE employee 
+                    SET first_name = :first_name, last_name = :last_name, username = :username
+                    WHERE employee_id = :id";
+        }
 
         $stmt = $conn->prepare($sql);
-        $stmt->bindParam(":first_name", $data["first_name"]);
-        $stmt->bindParam(":last_name", $data["last_name"]);
-        $stmt->bindParam(":username", $data["username"]);
-       if (!empty($data["password"])) {
-            $stmt->bindParam(":password", $password_hash);
-        }
-        $stmt->bindParam(":id", $customer_id, PDO::PARAM_INT);
+        $stmt->bindParam(":first_name", $first_name);
+        $stmt->bindParam(":last_name", $last_name);
+        $stmt->bindParam(":username", $username);
+        $stmt->bindParam(":id", $employee_id, PDO::PARAM_INT);
+        if ($password_hash) $stmt->bindParam(":password", $password_hash);
 
         if ($stmt->execute()) {
             echo json_encode(["success" => true, "message" => "แก้ไขข้อมูลเรียบร้อย"]);
         } else {
             echo json_encode(["success" => false, "message" => "ไม่สามารถแก้ไขข้อมูลได้"]);
         }
-        $stmt->bindParam(":image", $data["image"]);
-        $stmt->bindParam(":id", $employee_id, PDO::PARAM_INT);
-
-        if ($stmt->execute()) {
-            echo json_encode(["success" => true, "message" => "แก้ไขข้อมูลพนักงานเรียบร้อย"]);
-        } else {
-            echo json_encode(["success" => false, "message" => "ไม่สามารถแก้ไขข้อมูลพนักงานได้"]);
-        }
+        exit;
     }
 
     // ✅ ลบข้อมูลพนักงาน
-    elseif ($method === "DELETE") {
-        $data = json_decode(file_get_contents("php://input"), true);
+    if ($action === "delete") {
+        $employee_id = $_POST["employee_id"] ?? "";
 
-        if (!isset($data["employee_id"])) {
-            echo json_encode(["success" => false, "message" => "ไม่พบค่า employee_id"]);
+        if (empty($employee_id)) {
+            echo json_encode(["success" => false, "message" => "ไม่พบรหัสพนักงาน"]);
             exit;
         }
 
-        $stmt = $conn->prepare("DELETE FROM employees WHERE employee_id = :id");
-        $stmt->bindParam(":id", $data["employee_id"], PDO::PARAM_INT);
+        $stmt = $conn->prepare("DELETE FROM employee WHERE employee_id = :id");
+        $stmt->bindParam(":id", $employee_id, PDO::PARAM_INT);
 
         if ($stmt->execute()) {
             echo json_encode(["success" => true, "message" => "ลบข้อมูลพนักงานเรียบร้อย"]);
         } else {
             echo json_encode(["success" => false, "message" => "ไม่สามารถลบข้อมูลพนักงานได้"]);
         }
+        exit;
     }
 
-    else {
-        echo json_encode(["success" => false, "message" => "Method ไม่ถูกต้อง"]);
-    }
+    echo json_encode(["success" => false, "message" => "Action ไม่ถูกต้อง"]);
 
 } catch (Exception $e) {
-    echo json_encode(["success" => false, "message" => $e->getMessage()]);
+    echo json_encode(["success" => false, "message" => "Error: " . $e->getMessage()]);
 }
+?>

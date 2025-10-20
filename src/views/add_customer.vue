@@ -47,7 +47,7 @@ export default {
   methods: {
     async addCustomer() {
       try {
-        const res = await fetch("http://localhost:8082/project_vue/api.php/add_customer.php", {
+        const res = await fetch("http://localhost/project_vue/api.php/add_customer.php", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(this.customer)
