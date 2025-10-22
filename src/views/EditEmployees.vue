@@ -3,7 +3,7 @@
     <h2 class="mb-3">รายการพนักงาน</h2>
 
     <div class="mb-3">
-      <button class="btn btn-primary" @click="openAddModal">เพิ่มพนักงาน</button>
+      <a class="btn btn-primary" href="/epyadd" role="button">Add+</a>
     </div>
 
     <table class="table table-bordered table-striped">
@@ -13,7 +13,7 @@
           <th>ชื่อ</th>
           <th>นามสกุล</th>
           <th>ชื่อผู้ใช้</th>
-          <th>รหัสผ่าน</th>
+          <th>รูป</th>
           <th>การจัดการ</th>
         </tr>
       </thead>
@@ -23,7 +23,9 @@
           <td>{{ employee.first_name }}</td>
           <td>{{ employee.last_name }}</td>
           <td>{{ employee.username }}</td>
-          <td>{{ employee.password }}</td> 
+          <td>
+            <img v-if="employee.image" :src="'http://localhost/project_vue/uploads/' + employee.image" width="60" />
+          </td>
           <td>
             <button class="btn btn-warning btn-sm me-2" @click="openEditModal(employee)">
               แก้ไข
@@ -39,7 +41,7 @@
     <div v-if="loading" class="text-center"><p>กำลังโหลดข้อมูล...</p></div>
     <div v-if="error" class="alert alert-danger">{{ error }}</div>
 
-    <!-- Modal สำหรับเพิ่ม / แก้ไขพนักงาน -->
+    <!-- Modal -->
     <div class="modal fade" id="editModal" tabindex="-1">
       <div class="modal-dialog modal-md">
         <div class="modal-content">
@@ -96,7 +98,9 @@ export default {
       last_name: "",
       username: "",
       password: "",
+      image: null,
     });
+
     let modalInstance = null;
 
     const fetchEmployees = async () => {
@@ -111,27 +115,19 @@ export default {
       }
     };
 
-    const openAddModal = () => {
-      isEditMode.value = false;
-      editForm.value = {
-        employee_id: null,
-        first_name: "",
-        last_name: "",
-        username: "",
-        password: "",
-      };
+    const openEditModal = (employee) => {
+      isEditMode.value = true;
+      editForm.value = { ...employee, password: "", image: null };
       const modalEl = document.getElementById("editModal");
       modalInstance = new window.bootstrap.Modal(modalEl);
       modalInstance.show();
     };
 
-    const openEditModal = (employee) => {
-      isEditMode.value = true;
-      // ตั้ง password เป็นว่าง ไม่ให้เปลี่ยนเอง
-      editForm.value = { ...employee, password: "" };
-      const modalEl = document.getElementById("editModal");
-      modalInstance = new window.bootstrap.Modal(modalEl);
-      modalInstance.show();
+    const onFileChange = (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        editForm.value.image = file;
+      }
     };
 
     const saveEmployee = async () => {
@@ -141,10 +137,11 @@ export default {
       formData.append("first_name", editForm.value.first_name);
       formData.append("last_name", editForm.value.last_name);
       formData.append("username", editForm.value.username);
-
-      // ส่งรหัสผ่านเฉพาะถ้ามีการกรอก
       if (editForm.value.password !== "") {
         formData.append("password", editForm.value.password);
+      }
+      if (editForm.value.image) {
+        formData.append("image", editForm.value.image);
       }
 
       try {
@@ -153,13 +150,9 @@ export default {
           body: formData,
         });
         const result = await res.json();
-        if (result.message) {
-          alert(result.message);
-          await fetchEmployees();
-          if (modalInstance) modalInstance.hide();
-        } else if (result.error) {
-          alert(result.error);
-        }
+        alert(result.message || result.error);
+        await fetchEmployees();
+        if (modalInstance) modalInstance.hide();
       } catch (err) {
         alert("เกิดข้อผิดพลาด: " + err.message);
       }
@@ -176,12 +169,8 @@ export default {
           body: formData,
         });
         const result = await res.json();
-        if (result.message) {
-          alert(result.message);
-          employees.value = employees.value.filter((e) => e.employee_id !== id);
-        } else if (result.error) {
-          alert(result.error);
-        }
+        alert(result.message || result.error);
+        await fetchEmployees();
       } catch (err) {
         alert("เกิดข้อผิดพลาด: " + err.message);
       }
@@ -195,10 +184,10 @@ export default {
       error,
       editForm,
       isEditMode,
-      openAddModal,
       openEditModal,
       saveEmployee,
       deleteEmployee,
+      onFileChange,
     };
   },
 };

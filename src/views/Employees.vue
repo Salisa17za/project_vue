@@ -26,7 +26,7 @@
           <td>{{ employee.username }}</td>
           <td>{{ employee.password }}</td>
           <td><img
-            :src="'http://localhost/project_vue/uploads/' + employee.image"
+            :src="'http://localhost/project_vue/api.php/uploads/' + employee.image"
   width="100"
   height="150"
   class="img-thumbnail rounded"

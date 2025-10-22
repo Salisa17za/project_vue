@@ -1,36 +1,46 @@
 <?php
-  // เชื่อมต่อฐานข้อมูล
 include 'condb.php';
 
 try {
- //ตรวจสอบคำขอที่ได้รับจาก Client  ตามประเภทของคำ ว่าเป็น GET หรือ POST
-    $method = $_SERVER['REQUEST_METHOD'];
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        // รับค่าจาก $_POST แทน json
+        if (isset($_POST['first_name'], $_POST['last_name'], $_POST['username'], $_POST['password']) && isset($_FILES['image'])) {
 
-   if ($method == 'POST') {
-        // รับข้อมูลจาก Client
-        $data = json_decode(file_get_contents("php://input"), true);
+            $first_name = $_POST['first_name'];
+            $last_name = $_POST['last_name'];
+            $username = $_POST['username'];
+            $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
 
-        // ตรวจสอบค่าที่จำเป็น
-        if (isset($data['first_name'], $data['last_name'],  $data['username'], $data['password'], $data['image'])) {
-            // เพิ่มข้อมูลลูกค้าใหม่
-          $stmt = $conn->prepare("INSERT INTO employee (first_name, last_name, phone, username, password) VALUES (:first_name, :last_name,  :username, :password,:image)");
-            $stmt->bindParam(':firstName', $data['firstName']);
-            $stmt->bindParam(':last_name', $data['last_name']);
-            $stmt->bindParam(':username', $data['username']);
-            $hashedPassword = password_hash($data['password'], PASSWORD_BCRYPT);
-            $stmt->bindParam(':password', $hashedPassword);
+            // อัปโหลดรูปภาพ
+            $image = $_FILES['image'];
+            $image_name = uniqid() . "_" . basename($image["name"]);
+            $target_dir = "uploads/";
+            $target_file = $target_dir . $image_name;
 
-            if ($stmt->execute()) {
-                echo json_encode(["success" => true, "message" => "employee added successfully"]);
+            if (move_uploaded_file($image["tmp_name"], $target_file)) {
+                // เตรียมคำสั่ง SQL
+                $stmt = $conn->prepare("INSERT INTO employee (first_name, last_name, username, password, image) 
+                                        VALUES (:first_name, :last_name, :username, :password, :image)");
+
+                $stmt->bindParam(':first_name', $first_name);
+                $stmt->bindParam(':last_name', $last_name);
+                $stmt->bindParam(':username', $username);
+                $stmt->bindParam(':password', $password);
+                $stmt->bindParam(':image', $image_name); // บันทึกชื่อไฟล์
+
+                if ($stmt->execute()) {
+                    echo json_encode(["success" => true, "message" => "เพิ่มพนักงานเรียบร้อยแล้ว"]);
+                } else {
+                    echo json_encode(["success" => false, "message" => "ไม่สามารถเพิ่มข้อมูลได้"]);
+                }
             } else {
-                echo json_encode(["success" => false, "message" => "Error adding employee"]);
+                echo json_encode(["success" => false, "message" => "อัปโหลดรูปภาพไม่สำเร็จ"]);
             }
         } else {
-            echo json_encode(["success" => false, "message" => "Missing required fields"]);
+            echo json_encode(["success" => false, "message" => "ข้อมูลไม่ครบถ้วน"]);
         }
-    } 
+    }
 } catch (PDOException $e) {
     echo json_encode(["success" => false, "message" => "Database error: " . $e->getMessage()]);
 }
-
 ?>
