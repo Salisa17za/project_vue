@@ -15,7 +15,7 @@
         <input v-model="customer.username" class="form-control" placeholder="ชื่อผู้ใช้" required />
       </div>
       <div class="mb-2">
-        <input type="password" v-model="customer.password" class="form-control" placeholder="รหัสผ่าน" required />
+        <input v-model="customer.password" class="form-control" placeholder="รหัสผ่าน" required />
       </div>
       <div class="text-center mt-4 ">
       <button type="submit" class="btn btn-primary mb-4">บันทึก</button> &nbsp;

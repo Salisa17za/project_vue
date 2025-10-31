@@ -15,7 +15,9 @@
           <th>นามสกุล</th>
           <th>เบอร์โทร</th>
           <th>ชื่อผู้ใช้</th>
-          <th>ลบ</th>
+          <th>รหัสผ่าน</th>
+          
+          
         </tr>
       </thead>
       <tbody>
@@ -25,10 +27,10 @@
           <td>{{ customer.lastName }}</td>
           <td>{{ customer.phone }}</td>
           <td>{{ customer.username }}</td>
+          <td>{{ customer.password }}</td>
+          
           <!--เพิ่มปุ่มลบ -->
-      <td>  
-  <button class="btn btn-danger btn-sm" @click="deleteCustomer(customer.customer_id)">ลบ</button>
-</td>
+ 
         </tr>
       </tbody>
     </table>

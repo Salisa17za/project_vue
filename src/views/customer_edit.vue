@@ -15,6 +15,7 @@
           <th>นามสกุล</th>
           <th>เบอร์โทร</th>
           <th>ชื่อผู้ใช้</th>
+           <th>รหัสผ่าน</th>
           <th>แก้ไข/ลบ</th>
           
         </tr>
@@ -26,6 +27,7 @@
           <td>{{ customer.lastName }}</td>
           <td>{{ customer.phone }}</td>
           <td>{{ customer.username }}</td>
+          <td>{{ customer.password }}</td>
           <td>
             <!-- เพิ่ม ปุ่มแก้ไข -->
             <button class="btn btn-warning btn-sm" @click="openEditModal(customer)"><i class="fa-solid fa-pen-to-square"></i>แก้ไข</button> |      

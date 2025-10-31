@@ -118,14 +118,43 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '../views/add_employee.vue')
   }
-
+  ,
+   {
+    path: '/logcus',
+    name: 'logcus',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/login_customer.vue')
+  }
+  
 
 
 ]
 
+
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
-  routes
-})
+  routes,
+});
+
+// 🧠 Navigation Guard — ตรวจสอบการเข้าสู่ระบบ
+router.beforeEach((to, from, next) => {
+  const isLoggedIn = localStorage.getItem("customerLogin") === "true";
+
+  // ถ้าหน้านั้นต้องล็อกอินก่อน แต่ยังไม่ได้ล็อกอิน
+  if (to.meta.requiresAuth && !isLoggedIn) {
+    alert("⚠ กรุณาเข้าสู่ระบบก่อนใช้งานหน้านี้");
+    next("/logcus");
+  }
+  // ถ้าเข้าสู่ระบบแล้วแต่พยายามกลับไปหน้า login อีก → ส่งกลับหน้าแรก
+  else if (to.path === "/logcus" && isLoggedIn) {
+    next("/show");
+  } 
+  // อื่น ๆ ไปต่อได้ตามปกติ
+  else {
+    next();
+  }
+});
 
 export default router
